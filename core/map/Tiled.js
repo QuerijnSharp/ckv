@@ -25,7 +25,7 @@ export default class Tiled {
     let tiles = {};
 
     for (let tileset of mapData.tilesets) {
-      let tilesetImage = await loadImage("/maps/SampleMap/" + tileset.image);
+      let tilesetImage = await loadImage("./maps/SampleMap/" + tileset.image);
       for (let tileId of tileIds) {
         if (
           !(tileId in tiles) &&
