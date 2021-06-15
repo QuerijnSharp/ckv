@@ -3,6 +3,7 @@ import Map from "../map/Map.js";
 import Camera from "./Camera.js";
 import Player from "./Player.js";
 import Keyboard from "./GUI/Keyboard.js";
+import Joystick from "./GUI/Joystick.js";
 
 export default class Game {
   constructor(canvas, ctx, classType) {
@@ -22,7 +23,9 @@ export default class Game {
     this.camera.fov.height = 6 * 64; //27 * 32;//15 * 32;
     this.camera.fov.width = 7 * 128; //48*32;//26 * 32; //almost
 
-    this.moveController = new Keyboard();
+    this.moveController = this.hasTouch()
+      ? new Joystick(100, canvas.height - 100, 50)
+      : new Keyboard();
   }
 
   async init(mapName) {
@@ -101,6 +104,12 @@ export default class Game {
     );
   }
 
+  hasTouch() {
+    return (
+      "ontouchstart" in document.documentElement && "ontouchstart" in window
+    ); //use window instead?? TODO
+  }
+
   draw() {
     this.ctx.save();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -137,6 +146,7 @@ export default class Game {
       buffer.width * ratio,
       buffer.height * ratio
     );
+    this.moveController.draw(this.ctx);
     this.ctx.restore();
   }
 }

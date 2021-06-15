@@ -37,6 +37,10 @@ export default class Vector2 {
     this.y /= scalar;
   }
 
+  divide2(scalar) {
+    return new Vector2(this.x / scalar, this.y / scalar);
+  }
+
   normalize() {
     let norm = Math.hypot(this.x, this.y);
     this.x /= norm;
@@ -48,12 +52,16 @@ export default class Vector2 {
     this.y -= v.y;
   }
 
+  subtract2(v) {
+    return new Vector2(this.x - v.x, this.y - v.y);
+  }
+
   //TODO forgot how this worked*
   static projectOntoCircle(center, target, radius) {
     let distance = center.distance(target);
-    let subtract = target.subtract(center);
-    let division = subtract.divide(distance);
-    let multiplication = division.multiply(radius);
-    return center.add(multiplication);
+    let subtract = target.subtract2(center);
+    let division = subtract.divide2(distance);
+    let multiplication = division.multiply2(radius);
+    return center.add2(multiplication);
   }
 }
