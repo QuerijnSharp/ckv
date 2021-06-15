@@ -1,7 +1,7 @@
-import FOV from "./fov.js";
+import FOV from "./FOV.js";
 
 export default class Camera {
-    constructor() {
-        this.fov = new FOV();
-    }
+  constructor() {
+    this.fov = new FOV();
+  }
 }
