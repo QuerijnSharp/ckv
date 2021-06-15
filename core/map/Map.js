@@ -13,7 +13,7 @@ export default class Map {
 
     this.mapName = mapName;
 
-    this.mapData = await loadJSON(`maps/${mapName}/${mapName}.json`);
+    this.mapData = await loadJSON(`maps/Snowfall/${mapName}.json`); //TODO
     this.tiles = await Tiled.parse(this.mapData);
 
     for (let layer of this.mapData.layers) {

@@ -21,7 +21,7 @@ export default class Entity {
 
   async init() {
     this.spriteSheet = await loadImage(
-      `/assets/Classes/${this.classType.name}.png`
+      `./assets/Classes/${this.classType.name}.png`
     );
   }
 
