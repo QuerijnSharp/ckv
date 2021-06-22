@@ -21,7 +21,7 @@ export default class Entity {
 
   async init() {
     this.spriteSheet = await loadImage(
-      `./assets/Classes/${this.classType.name}.png`
+      `./assets/Classes/${this.classType.className}.png`
     );
   }
 
@@ -63,11 +63,24 @@ export default class Entity {
     }
   }
 
+  updateNetwork(player) {
+    if (player.oldFrames != null && this.oldFrames <= player.frames) return;
+    this.oldFrames = player.frames;
+    this.position = new Vector2(player.x, player.y);
+    this.setVelocity(new Vector2(player.velocityX, player.velocityY));
+  }
+
   setVelocity(direction) {
     this.direction = direction;
   }
 
   draw(ctx, game) {
+    if (
+      this.position.x == NaN ||
+      this.position.y == NaN ||
+      this.spriteSheet == null
+    )
+      return;
     let visible = this.position.add2(
       new Vector2(-game.camera.visibleX, -game.camera.visibleY)
     );

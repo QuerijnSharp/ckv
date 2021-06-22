@@ -3,7 +3,7 @@ import Teleport from "../abilities/Teleport.js";
 
 export default class Rogue {
   constructor() {
-    this.name = "Rogue";
+    this.className = "Rogue";
     this.classType = "dps";
     //init with player etc
     this.abilities = [];

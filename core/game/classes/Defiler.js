@@ -3,12 +3,14 @@ import Shield from "../abilities/Shield.js";
 import Stealth from "../abilities/Stealth.js";
 
 export default class Defiler {
-    constructor(player) {
-        this.classType = "tank";
-        player.health = 800;
+  constructor(player) {
+    this.classType = "tank";
+    this.className = "Defiler";
 
-        this.abilities = [];
-        this.abilities.push(new Stealth(player));
-        this.abilities.push(new Shield(player));
-    }
+    player.health = 800;
+
+    this.abilities = [];
+    this.abilities.push(new Stealth(player));
+    this.abilities.push(new Shield(player));
+  }
 }

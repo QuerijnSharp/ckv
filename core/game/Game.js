@@ -4,15 +4,25 @@ import Camera from "./Camera.js";
 import Player from "./Player.js";
 import Keyboard from "./GUI/Keyboard.js";
 import Joystick from "./GUI/Joystick.js";
+import Client from "./networking/Client.js";
+import Entity from "./Entity.js";
+import Rogue from "./classes/Rogue.js";
+import Defiler from "./classes/Defiler.js";
+import Magician from "./classes/Magician.js";
+import Panzer from "./classes/Panzer.js";
+import Underpinner from "./classes/Underpinner.js";
+import Curativer from "./classes/Curativer.js";
+import Button from "./GUI/Button.js";
 
 export default class Game {
   constructor(canvas, ctx, classType) {
+    this.frames = 0;
     this.map = new Map();
     this.stats = new Stats();
     this.player = new Player(classType, 32, 32);
 
     this.bulletMap = [];
-    this.players = [];
+    this.players = {};
 
     this.canvas = canvas;
     this.ctx = ctx;
@@ -26,11 +36,89 @@ export default class Game {
     this.moveController = this.hasTouch()
       ? new Joystick(100, canvas.height - 100, 50)
       : new Keyboard();
+
+    this.fsButton = new Button(canvas.width - 100, 100, 40);
+    this.fsButton.addEventListener("click", async () => {
+      //
+    });
+
+    let _this = this;
+    this.client = new Client();
+    this.client.addEventListener("open", (e) => {
+      _this.uuid = e.detail.uuid;
+      _this.client.sendOpen(_this);
+    });
+    this.client.addEventListener("startGame", (e) => {});
+    this.client.addEventListener("playerMove", (e) => {
+      if (e.detail.uuid in _this.players)
+        _this.players[e.detail.uuid].updateNetwork(e.detail.player);
+    });
+    this.client.addEventListener("playerShoot", (e) => {
+      _this.bulletMap.push(e.detail.bullet);
+    });
+    this.client.addEventListener("newPlayer", async (e) => {
+      switch (e.detail.player.playerClassName) {
+        case "Defiler":
+          _this.players[e.detail.uuid] = new Entity(
+            new Defiler(),
+            e.detail.player.x,
+            e.detail.player.y
+          );
+          break;
+
+        case "Rogue":
+          _this.players[e.detail.uuid] = new Entity(
+            new Rogue(),
+            e.detail.player.x,
+            e.detail.player.y
+          );
+          break;
+
+        case "Magician":
+          _this.players[e.detail.uuid] = new Entity(
+            new Magician(),
+            e.detail.player.x,
+            e.detail.player.y
+          );
+          break;
+
+        case "Panzer":
+          _this.players[e.detail.uuid] = new Entity(
+            new Panzer(),
+            e.detail.player.x,
+            e.detail.player.y
+          );
+          break;
+
+        case "Underpinner":
+          _this.players[e.detail.uuid] = new Entity(
+            new Underpinner(),
+            e.detail.player.x,
+            e.detail.player.y
+          );
+          break;
+
+        case "Curativer":
+          _this.players[e.detail.uuid] = new Entity(
+            new Curativer(),
+            e.detail.player.x,
+            e.detail.player.y
+          );
+          break;
+      }
+
+      await _this.players[e.detail.uuid].init();
+    });
+
+    this.client.addEventListener("removePlayer", (e) => {
+      delete _this.players[e.detail.uuid];
+    });
   }
 
   async init(mapName) {
     await this.map.init(mapName);
     await this.player.init();
+    this.fsButton.init(this.canvas);
     this.moveController.init(this.canvas);
     window.oldTS = -1;
     var _update = (ts) => {
@@ -74,6 +162,7 @@ export default class Game {
   }
 
   update(time) {
+    this.frames++;
     this.stats.begin();
     this.map.update(this, time);
     this.player.setVelocity(this.moveController.getVector2());
@@ -82,7 +171,7 @@ export default class Game {
     this.bulletMap.forEach((bullet) => bullet.update(this, time));
 
     this.player.update(this, time);
-    this.players.forEach((player) => player.update(this, time));
+    Object.values(this.players).forEach((player) => player.update(this, time));
 
     this.bulletMap = this.bulletMap.filter(
       (bullet) =>
@@ -102,6 +191,10 @@ export default class Game {
       10,
       20
     );
+
+    if (this.frames % 6 == 0) {
+      this.client.sendPlayer(this);
+    }
   }
 
   hasTouch() {
@@ -131,6 +224,9 @@ export default class Game {
       centerY = (this.canvas.height - buffer.height * ratio) / 2;
     }
 
+    Object.values(this.players).forEach((player) =>
+      player.draw(bufferCtx, this)
+    );
     this.player.draw(bufferCtx, this);
     //draw players
 
@@ -147,6 +243,7 @@ export default class Game {
       buffer.height * ratio
     );
     this.moveController.draw(this.ctx);
+    this.fsButton.draw(this.ctx);
     this.ctx.restore();
   }
 }

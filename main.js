@@ -25,6 +25,14 @@ window.addEventListener(
   () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
+    window.game.moveController.posX = 100;
+    window.game.moveController.posY = canvas.height - 100;
+    window.game.moveController.x = 100;
+    window.game.moveController.y = canvas.height - 100;
+
+    window.game.fsButton.posX = canvas.width - 100;
+    window.game.fsButton.posY = 100;
     //requestFullscreen
   },
   {
@@ -56,4 +64,3 @@ window.cancelRequestAnimationFrame = (function () {
 		|| clearTimeout
 })();
 */
-3;
