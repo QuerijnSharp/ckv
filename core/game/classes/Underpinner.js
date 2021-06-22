@@ -1,5 +1,5 @@
-import GroupHeal from "../abilities/Groupheal.js";
-import GroupSpeed from "../abilities/Groupspeed.js";
+import GroupHeal from "../abilities/GroupHeal.js";
+import GroupSpeed from "../abilities/GroupSpeed.js";
 
 export default class Underpinner {
   constructor(player) {
