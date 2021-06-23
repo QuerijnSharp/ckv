@@ -1,11 +1,30 @@
 import Game from "./core/game/Game.js";
 import Rogue from "./core/game/classes/Rogue.js";
+import Curativer from "./core/game/classes/Curativer.js";
+import Defiler from "./core/game/classes/Defiler.js";
+import Magician from "./core/game/classes/Magician.js";
+import Panzer from "./core/game/classes/Panzer.js";
+import Underpinner from "./core/game/classes/Underpinner.js";
 
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 canvas.width = document.documentElement.clientWidth;
 canvas.height = document.documentElement.clientHeight;
-var game = new Game(canvas, ctx, new Rogue());
+
+let classes = [
+  new Rogue(),
+  new Curativer(),
+  new Defiler(),
+  new Magician(),
+  new Panzer(),
+  new Underpinner(),
+];
+
+var game = new Game(
+  canvas,
+  ctx,
+  classes[Math.floor(Math.random() * classes.length)]
+);
 window.game = game;
 
 if (document.readyState !== "loading") {

@@ -15,6 +15,8 @@ export default class Map {
 
     this.mapData = await loadJSON(`maps/Snowfall/${mapName}.json`); //TODO
     this.tiles = await Tiled.parse(this.mapData);
+    this.width = this.mapData.width * this.mapData.tilewidth;
+    this.height = this.mapData.height * this.mapData.tileheight;
 
     for (let layer of this.mapData.layers) {
       let currentColumn = layer.x ?? 0; //test

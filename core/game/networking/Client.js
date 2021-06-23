@@ -103,4 +103,6 @@ export default class Client extends Emitter {
       );
     }
   }
+
+  sendBullet(game, bullet) {}
 }

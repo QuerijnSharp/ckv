@@ -28,10 +28,10 @@ export default class Game {
     this.ctx = ctx;
 
     this.camera = new Camera();
-    this.camera.visibleX = 3 * 128;
-    this.camera.visibleY = 5 * 64;
-    this.camera.fov.height = 6 * 64; //27 * 32;//15 * 32;
-    this.camera.fov.width = 7 * 128; //48*32;//26 * 32; //almost
+    this.camera.visibleX = 18 * 32;
+    this.camera.visibleY = 5 * 32;
+    this.camera.fov.height = 8 * 32; //27 * 32;//15 * 32;
+    this.camera.fov.width = 18 * 32; //48*32;//26 * 32; //almost
 
     this.moveController = this.hasTouch()
       ? new Joystick(100, canvas.height - 100, 50)
@@ -121,6 +121,7 @@ export default class Game {
     this.fsButton.init(this.canvas);
     this.moveController.init(this.canvas);
     window.oldTS = -1;
+    window.continue = true;
     var _update = (ts) => {
       if (oldTS == -1) {
         this.update(0);
@@ -129,7 +130,7 @@ export default class Game {
         this.update((ts - oldTS) / 1000); //To seconds
         oldTS = ts;
       }
-      requestAnimationFrame(_update);
+      if (window.continue) requestAnimationFrame(_update);
     };
     _update();
   }
@@ -168,18 +169,18 @@ export default class Game {
     this.player.setVelocity(this.moveController.getVector2());
     this.center();
 
-    this.bulletMap.forEach((bullet) => bullet.update(this, time));
+    this.bulletMap = this.bulletMap.filter(
+      (bullet) =>
+        bullet.update(this, time) &&
+        bullet.isAlive() &&
+        bullet.position.x < this.map.width &&
+        bullet.position.x > 0 &&
+        bullet.position.y < this.map.height &&
+        bullet.position.y > 0
+    );
 
     this.player.update(this, time);
     Object.values(this.players).forEach((player) => player.update(this, time));
-
-    this.bulletMap = this.bulletMap.filter(
-      (bullet) =>
-        bullet.x < this.map.width &&
-        bullet.x > 0 &&
-        bullet.y < this.map.height &&
-        bullet.y > 0
-    );
 
     this.draw();
     this.stats.end();
@@ -225,9 +226,10 @@ export default class Game {
     }
 
     Object.values(this.players).forEach((player) =>
-      player.draw(bufferCtx, this)
+      !player.invisible ? player.draw(bufferCtx, this) : 0
     );
     this.player.draw(bufferCtx, this);
+    this.bulletMap.forEach((bullet) => bullet.draw(bufferCtx, this));
     //draw players
 
     this.map.drawForeground(bufferCtx, this);
@@ -244,6 +246,15 @@ export default class Game {
     );
     this.moveController.draw(this.ctx);
     this.fsButton.draw(this.ctx);
+
+    this.player.drawHealthBar(
+      this.ctx,
+      this.canvas.width * (9 / 10),
+      this.canvas.height * (1 / 10),
+      (this.player.health / this.player.classType.maxHealth) * 100,
+      this.canvas.width * (1 / 10),
+      15
+    );
     this.ctx.restore();
   }
 }

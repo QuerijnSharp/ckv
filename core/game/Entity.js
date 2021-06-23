@@ -23,6 +23,10 @@ export default class Entity {
     this.spriteSheet = await loadImage(
       `./assets/Classes/${this.classType.className}.png`
     );
+
+    this.bulletImage = await loadImage(
+      `./assets/Classes/${this.classType.className}Bullet.png`
+    );
   }
 
   update(game, time) {
@@ -61,6 +65,8 @@ export default class Entity {
     } else {
       this.moving = false;
     }
+
+    this.classType.update(this);
   }
 
   updateNetwork(player) {
@@ -86,6 +92,9 @@ export default class Entity {
     );
 
     ctx.save();
+    if (this.invisible) {
+      ctx.globalAlpha = 0.4;
+    }
     if (this.moving) {
       ctx.shadowColor = "rgba(0,0,0,1)";
       ctx.shadowBlur = 5;
