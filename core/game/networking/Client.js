@@ -10,7 +10,7 @@ export default class Client extends Emitter {
 
   connect() {
     let _this = this;
-    this.ws = new WebSocket("ws://192.168.11.18:13637"); // Change url when server is up
+    this.ws = new WebSocket("wss://192.168.11.18:13637"); // Change url when server is up
 
     this.ws.addEventListener("error", (e) => {});
 
