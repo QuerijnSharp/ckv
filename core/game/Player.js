@@ -41,9 +41,9 @@ export default class Player extends Entity {
       this.direction.x == 0 &&
       this.direction.y == 0
     ) {
-      this.health += 0.5;
+      this.health += 2;
     } else if (this.direction.x != 0 || this.direction.y != 0) {
-      this.health -= 0.5;
+      this.health -= 0.25;
     }
 
     if (this.health < 0) {
